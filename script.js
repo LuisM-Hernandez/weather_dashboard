@@ -27,18 +27,16 @@ $(document).ready(function () {
 
         $.ajax({
             type: "GET",
-            url: "http://api.openweathermap.org/data/2.5/forecast?q="+ searchValue+ "&appid=" + apiKey,
+            url: "http://api.openweathermap.org/data/2.5/forecast?q="+ searchValue + "&units=imperial"+ "&appid=" + apiKey,
             dataType: "json"
         }).then(function(response){
             console.log(response);
 
-            var div1 = $("<div>")
-            $("#day1").text(moment().add(1,"days").format("MM/DD/YY"))
-            div1
-            
-            
-            
-            
+        
+            $("#day1").text(moment().add(1,"days").format("MM/DD/YY"));
+            $("<img>").attr("src", "http://openweathermap.org/img/wn/10d@2x.png").appendTo("#day1");
+            $("<div>").text("Temperature: "+ response.list[0].main.temp + " °F").appendTo("#day1");
+            $("<div>").text("Humidity: "+ response.list[0].main.humidity + "%").appendTo("#day1");
 
         })
         
