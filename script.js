@@ -18,13 +18,40 @@ $(document).ready(function () {
         }).then(function (currentWeather) {
             console.log(currentWeather)
           
-            $("#city-name").text(currentWeather.name);
+            $("#day1").text(moment().add(0,"days").format("MM/DD/YY"));
+
+            $("#city-name").text(currentWeather.name)
             $("#temperature").text("Temperature: "+ currentWeather.main.temp + " °F");
             $("#humidity").text("Humidity: " + currentWeather.main.humidity + "%");
             $("#wind-speed").text("Wind Speed: " + currentWeather.wind.speed);
-            // $("#UV-index").text(response)
-        })
+           
 
+            
+            lat = currentWeather.coord.lat
+            lon = currentWeather.coord.lon
+            weatherLocation(lat,lon);
+
+        })
+        
+
+     function weatherLocation(lat, lon){
+
+         
+         $.ajax({
+             type: "GET",
+             url: "http://api.openweathermap.org/data/2.5/uvi?lat="+ lat + "&lon=" + lon + "&appid=" + apiKey,
+             dataType: "json"
+            }).then(function(uvInd){
+                console.log(uvInd);
+                $("#UV-index").text("UV Index: " + uvInd.value);
+                
+
+            })
+            
+        }
+            
+            
+            
         $.ajax({
             type: "GET",
             url: "http://api.openweathermap.org/data/2.5/forecast?q="+ searchValue + "&units=imperial"+ "&appid=" + apiKey,
