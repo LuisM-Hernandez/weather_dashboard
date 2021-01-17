@@ -2,15 +2,13 @@ $(document).ready(function () {
 
 
     //TODO LIST TO FINISH:
-
-    //ADD THE CITIES SEARCH TO LOCAL STORAGE
-    
-    //PUT PARAMETERS SO WHEN THE UV INDEX IS A CERTAIN RANGE IT CHANGES COLOR
-    //WHEN OPEN AGAIN I STILL HAVE THE LAST SEARCHED CITY
+    //ADD THE CITIES SEARCH TO LOCAL STORAGE. WHEN OPEN AGAIN I STILL HAVE THE LAST SEARCHED CITY
+    //FIX APPENDING EACH TIME ANOTHER SEARCH IS DONE
 
     const apiKey = "003a409f77a14111e24eab0bc46c05ec";
 
-    $("#search-button").on("click", function () {
+    $("#search-button").on("click", function (e) {
+        e.preventDefault();
         var searchValue = $("#city-input").val()
         console.log(searchValue);
         searchWeather(searchValue);
@@ -28,37 +26,43 @@ $(document).ready(function () {
 
             var currentTime = (moment().add(0,"days").format("MM/DD/YY"));
           // Need to fix position of icon
-         
-
-
-
             $("<h3>").appendTo("#city-name").text(currentWeather.name + "  "+ currentTime)
             $("<img>").attr("src", "http://openweathermap.org/img/wn/" + currentWeather.weather[0].icon + "@2x.png").appendTo("#city-name");
             $("#temperature").text("Temperature: "+ currentWeather.main.temp + " °F");
             $("#humidity").text("Humidity: " + currentWeather.main.humidity + "%");
             $("#wind-speed").text("Wind Speed: " + currentWeather.wind.speed);
-           
 
-            
             lat = currentWeather.coord.lat
             lon = currentWeather.coord.lon
             weatherLocation(lat,lon);
-
-        })
+        });
         
 
      function weatherLocation(lat, lon){
 
-         
          $.ajax({
              type: "GET",
              url: "http://api.openweathermap.org/data/2.5/uvi?lat="+ lat + "&lon=" + lon + "&appid=" + apiKey,
              dataType: "json"
             }).then(function(uvInd){
                 console.log(uvInd);
-                //Fix add color
-                $("#UV-index").text("UV Index: " + uvInd.value);
                 
+                //Need Fix: UV color only for the number background
+                //Need to refactor to more DRY code
+                $("#UV-index").text("UV Index: " + uvInd.value);
+
+                if(uvInd.value >=3 && uvInd.value <=5){
+                    $("#UV-index").attr("style", "background-color:yellow");
+                }
+                else if(uvInd.value >= 6 && uvInd.value <=7){
+                    $("#UV-index").attr("style", "background-color:orange");
+                }
+                else if(uvInd.value >= 8){
+                    $("#UV-index").attr("style", "background-color:red");
+                }
+                else {
+                    $("#UV-index").attr("style", "background-color:green");
+                }
 
             })
             
